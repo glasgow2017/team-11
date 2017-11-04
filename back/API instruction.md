@@ -15,6 +15,10 @@ This function is used to combine two function(parse_response and send_requests_b
 2. Put imageDecoded into function getRecogTextFromImage to get the recognitionResult which describe the picture and if recognitionResult is in the imagCache, it will return the recognitionResult to show description of the picture, if not, it will return no results or invalid request.
 ## URL Params
 ## Data Params
+{<br />
+config :{<br />
+ Location : "westeurope",<br />
+ visualFeatures : "Tags,Description"}
 ## Success Response
 ## Error response
 **Code:** 10<br />
