@@ -1,0 +1,5 @@
+https://maps.googleapis.com/maps/api/staticmap?scale=2&center=51.504058%2C-0.192783
+https://www.yelp.co.uk/biz/ffionas-restaurant-london
+
+https://google-developers.appspot.com/maps/documentation/embed/demos/embed?
+//www.google.com/maps/embed/v1/place?q=Harrods,Brompton%20Rd,%20UK
