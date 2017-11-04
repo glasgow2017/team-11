@@ -3,3 +3,6 @@ https://www.yelp.co.uk/biz/ffionas-restaurant-london
 
 https://google-developers.appspot.com/maps/documentation/embed/demos/embed?
 //www.google.com/maps/embed/v1/place?q=Harrods,Brompton%20Rd,%20UK
+
+# pip install textblob
+# python -m textblob.download_corpora
