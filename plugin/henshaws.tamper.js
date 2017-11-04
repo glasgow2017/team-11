@@ -15,9 +15,24 @@
     const getTextUrl = 'getText';
     const getTextWithImg = 'getTextWithImg';
 
+    function getBlobFromServer(src) {
+        return new Promise((resolve, reject) => {
+            GM_xmlhttpRequest({
+                url: src,
+                method: "GET",
+                onload: function (response) {
+                    if (response.status === 200 && response.responseText) {
+                        resolve(response.responseText);
+                    } else {
+                        reject(response.status);
+                    }
+                }
+            });
+        });
+    }
+
     async function getBlobBase64FromSrc(src) {
-        let response = await fetch(src);
-        let blob = await response.blob();
+        let blob = await getBlobFromServer(src);
         return await blobToBase64(blob);
     }
 
@@ -30,18 +45,21 @@
         });
     }
 
+    // {"result": "......description......"}
     async function getImgElements() {
-        let imgElements= {};
+        let imgElements = {};
         for (let i = 0; i < document.images.length; i++) {
             let imgElement = document.images[i];
-            imgElements[i] = {element: imgElement, src: imgElement.src, blob: await getBlobBase64FromSrc(imgElement.src)}
+            imgElements[i] = {
+                element: imgElement,
+                src: imgElement.src,
+                blob: await getBlobBase64FromSrc(imgElement.src)
+            }
         }
         return imgElements;
     }
 
     getImgElements().then(console.log);
 
-
-
-
+    
 })();
