@@ -1,5 +1,8 @@
-# API Instruction
-## How to get the image:
+# API 
+## URL
+/users :Azure_APIKEY
+## Method
+### How to get the image:
 1.Import requests, jason and os establich path to connect microsoft API
 ### Build function getRecogTextFromImage 
 This function is used to combine two function(parse_response and send_requests_by_image) to request for URL
@@ -10,3 +13,9 @@ This function is used to combine two function(parse_response and send_requests_b
 ### Build function getTextUsingAPI 
 1.First try to tell if the data are images or not. If data are image and find its URL and encode it into more simple code by hashlib to avoid long source and then import base64 and encode it again. The result imageDecoded will become very short and is easy to read. 
 2. Put imageDecoded into function getRecogTextFromImage to get the recognitionResult which describe the picture and if recognitionResult is in the imagCache, it will return the recognitionResult to show description of the picture, if not, it will return no results or invalid request.
+## URL Params
+## Data Params
+## Success Response
+## Error response
+## Simple Call
+## Notes
