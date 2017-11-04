@@ -1,6 +1,6 @@
 # Project Name
 
-The project aims to build a chrome plug-in to help people with impaired vision to get easy access to dynamic websites. Basically it decribes text, images and other content to disabled readers, and thus aid them to grab the most interested information and navigate among pages. 
+The project aims to build tampermonkey plug-in to help people with impaired vision to get easy access to dynamic websites. Basically it decribes text, images and other content to disabled readers, and thus aid them to grab the most interested information and navigate among pages. 
 
 
 
