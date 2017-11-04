@@ -11,7 +11,9 @@
 (function () {
     'use strict';
 
-    const url = 'server url';
+    const url = 'http://ec2-52-209-24-100.eu-west-1.compute.amazonaws.com:5000/';
+    const getTextUrl = 'getText';
+    const getTextWithImg = 'getTextWithImg';
 
     async function getBlobBase64FromSrc(src) {
         let response = await fetch(src);
