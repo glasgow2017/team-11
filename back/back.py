@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import base64
 import hashlib
+from image_recognition.img_trans import getRecogTextFromImage
 
 app = Flask(__name__)
 
@@ -15,7 +16,7 @@ def getTextUsingCache(imageHash):
     if imageHash in imageCache:
         return jsonify(result=imageCache[imageHash])
     else:
-        return jsonify(errorCode=1, errorMsg='Not in cache'), 404
+        return jsonify(errorCode=10, errorMsg='Not in cache'), 404
 
 @app.route('/getTextWithImg', methods=['POST'])
 def getTextUsingAPI():
@@ -25,15 +26,16 @@ def getTextUsingAPI():
         imageHash = hashlib.sha256(imageEncoded).hexdigest()
         imageDecoded = base64.b64decode(imageEncoded)
 
-        recognitionResult = getTextFromImage(imageDecoded)
+        recognitionResult = getRecogTextFromImage(imageDecoded)
 
-        imageCache[imageHash] = recognitionResult
-        return jsonify(result=recognitionResult)
+        if recognitionResult:
+            imageCache[imageHash] = recognitionResult
+            return jsonify(result=recognitionResult)
+        else:
+            return jsonify(errorCode=1, errorMsg='No result'), 204
+
     else:
-        return jsonify(errorCode=2, errorMsg='Invalid request'), 400
-
-def getTextFromImage(image):
-    return 'dummyData'
+        return jsonify(errorCode=20, errorMsg='Invalid request'), 400
 
 if __name__ == '__main__':
     app.run()
