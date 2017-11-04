@@ -1,14 +1,15 @@
 # Project Name
 
-The project
+The project aims to build a chrome plug-in to help people with impaired vision to get easy access to dynamic websites. Basically it decribes text, images and other content to disabled readers, and thus aid them to grab the most interested information and navigate among pages. 
 
-## Installation
 
-1: 
 
 ## Usage
+1. get image sources from the website.
+2. convert the images into sentences using external API.
+3. replace the orginal images with the sentences and get them read using voiceover. 
 
-TODO: Write usage instructions
+
 
 ## Contributing
 
