@@ -10,10 +10,10 @@ imageCache = {}
 def blankDefault():
     return ''
 
-@app.route('/getText/<imgId>', methods=['GET'])
-def getTextUsingCache(imgId):
-    if imgId in imageCache:
-        return jsonify(result=imageCache[imgId])
+@app.route('/getText/<imageHash>', methods=['GET'])
+def getTextUsingCache(imageHash):
+    if imageHash in imageCache:
+        return jsonify(result=imageCache[imageHash])
     else:
         return jsonify(errorCode=1, errorMsg='Not in cache'), 404
 
