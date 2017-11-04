@@ -17,11 +17,11 @@ This function is used to combine two function(parse_response and send_requests_b
 ## Data Params
 ## Success Response
 ## Error response
-**Code:** 10
-**Content:** {error:Not in cache}
-**Code:** 1
-**Content:** {error:No result}
-**Code** 20
-**Content:** {error:Invalid request}
+**Code:** 10<br />
+**Content:** {error:Not in cache}<br />
+**Code:** 1<br />
+**Content:** {error:No result}<br />
+**Code** 20<br />
+**Content:** {error:Invalid request}<br />
 ## Simple Call
 ## Notes
