@@ -1,4 +1,5 @@
 import nltk.data
+from textblob import TextBlob
 # nltk.download('punkt')
 
 def get_sentences(data):
@@ -45,3 +46,18 @@ def rank_word_by_appearance(words, order='acs'):
 
 def find_top_words(sorted_word_bank, num=10):
     return sorted_word_bank[:num]
+
+
+def get_nouns(text, tags=['NN', 'NNP']):
+    blob = TextBlob(text)
+    nouns = [word.lower() for word, tag in blob.tags if tag in tags]
+    return nouns
+
+def get_nouns_bank(text):
+    nouns = get_nouns(text)
+    return get_word_bank(nouns)
+
+def get_top_nouns(text, num=10):
+    nouns_bank = get_nouns_bank(text)
+    sorted_nouns_bank = rank_word_by_appearance(nouns_bank)
+    return find_top_words(sorted_nouns_bank)
