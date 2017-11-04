@@ -20,8 +20,8 @@ def getTextUsingCache(imgId):
 @app.route('/getTextWithImg', methods=['POST'])
 def getTextUsingAPI():
     data = request.get_json()
-    if data and data.image:
-        imageEncoded = data.image
+    if data and data['image']:
+        imageEncoded = data['image']
         imageHash = hashlib.sha256(imageEncoded).hexdigest()
         imageDecoded = base64.b64decode(imageEncoded)
 
