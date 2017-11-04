@@ -140,20 +140,20 @@ def find_top_words_from_text(text, num=10):
 # text = find_text_from_html(test_url, )
 
 def get_webpage_description(to_read_url):
-    template_topic = 'Keywords of this webpage are:'
-    template_wordcount = 'There are around {0} words'
+    #template_topic = 'Keywords of this webpage are:'
+    #template_wordcount = 'There are around {0} words'
 
     text = get_text_from_html(to_read_url)
     response = {'topic':'', 'word_count': ''}
     try:
         top_nouns = find_top_words_from_text(text)
-        response['topic'] = template_topic + ', '.join(top_nouns)
+        response['topic'] = top_nouns #template_topic + ', '.join(top_nouns)
     except:
         response['topic'] = ''
 
     try:
         text_length = len(get_words_from_article(text))
-        response['word_count'] = template_wordcount.format(str(text_length))
+        response['word_count'] = text_length #template_wordcount.format(str(text_length))
     except:
         response['word_count'] = ''
 
