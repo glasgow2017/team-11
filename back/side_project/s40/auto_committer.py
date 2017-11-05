@@ -13,7 +13,7 @@ import random
 fn = 'test_shake.txt'
 with open(fn, 'r') as f:
     data = f.readlines()
-    
+
 print(len([x for x in data if len(x) > 30 and len(x) < 50]))
 
 
@@ -44,12 +44,14 @@ def auto_submission():
     mess += random.choice(actions)
     mess += generate_comment(data)
     print mess
+    os.system('git pull')
+    time.sleep(5)
     os.system("git add *")
     time.sleep(5)
     os.system("git commit -m '{mess}'".format(mess=mess))
     time.sleep(5)
     os.system("git push")
-    
+
 
 def generate_comment(data):
     fn = 'test_shake.txt'
@@ -57,7 +59,7 @@ def generate_comment(data):
         data = f.readlines()
 
     data = [x for x in data if len(x) > 30 and len(x) < 50]
-    
+
     message = data.pop().strip()
     with open(fn, 'wb') as f:
         f.writelines(data)
@@ -68,13 +70,10 @@ def generate_comment(data):
 # In[ ]:
 
 for i in range(100):
-    rnd = random.randint(20, 100)
+    rnd = random.randint(60, 300)
     print i, rnd
     time.sleep(rnd)
     auto_submission()
 
 
 # In[ ]:
-
-
-
