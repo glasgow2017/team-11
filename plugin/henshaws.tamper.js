@@ -13,14 +13,37 @@
 (function () {
     'use strict';
 
-    const url = 'http://ec2-52-209-24-100.eu-west-1.compute.amazonaws.com:5000/';
+    const apiUrl = 'http://ec2-52-209-24-100.eu-west-1.compute.amazonaws.com:5000/';
     const getTextUrl = 'getText';
     const getTextWithImgUrl = 'getTextWithImg';
+    const getTopicUrl = 'getTopic';
+
+    function getTopicFromServer(url) {
+        return new Promise((resolve, reject) => {
+            GM_xmlhttpRequest({
+                url: apiUrl + getTopicUrl,
+                method: "POST",
+                data: JSON.stringify({url: url}),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                onload: function (response) {
+                    if (response.status === 200 && response.responseText) {
+                        resolve(JSON.parse(response.responseText));
+                    } else if (response.status === 404) {
+                        resolve();
+                    } else {
+                        resolve();
+                    }
+                }
+            });
+        });
+    }
 
     function getTextFromServer(imageHash) {
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
-                url: url + getTextUrl + '/' + imageHash,
+                url: apiUrl + getTextUrl + '/' + imageHash,
                 method: "GET",
                 onload: function (response) {
                     if (response.status === 200 && response.responseText) {
@@ -38,7 +61,7 @@
     function getTextWithImgFromServer(imageBase64Blob) {
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
-                url: url + getTextWithImgUrl,
+                url: apiUrl + getTextWithImgUrl,
                 method: "POST",
                 data: JSON.stringify({image: imageBase64Blob}),
                 headers: {
@@ -125,7 +148,20 @@
         }
     }
 
+    async function addTopicsToDocument() {
+        let topics = await getTopicFromServer(document.URL);
+        if (topics && topics.topic && topics.word_count) {
+            let topicJoin = topics.topic.join(', ');
+            let topicString = `The most used words in this document are ${topicJoin}. The word count is ${topics.word_count}.`;
+            let topicDiv = document.createElement('div');
+            topicDiv.innerText = topicString;
+            document.body.insertBefore(topicDiv, document.body.firstChild);
+            console.log(topicString);
+        }
+    }
+
     getImgElementsAndConvertToText().catch(console.error);
 
+    addTopicsToDocument().catch(console.error);
 
 })();
