@@ -1026,4 +1026,3 @@ Enter Hamlet, and two or three of the Players.
 Enter Polonius, Rosincrance, and Guildensterne.
 Will the King heare this peece of Worke?
   Pol. And the Queene too, and that presently
-Ham. Bid the Players make hast.
