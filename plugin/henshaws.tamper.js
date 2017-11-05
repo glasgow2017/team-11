@@ -200,22 +200,24 @@
         let imageElements = await getImgElements();
         if (imageElements.length > 0) {
             for (let imageElement of imageElements) {
-                if (!imageElement.element.alt) {
-                    let text = await getTextFromServer(imageElement.sha256);
-                    if (!text || !text.result) {
-                        text = await getTextWithImgFromServer(imageElement.blob);
+                let text = await getTextFromServer(imageElement.sha256);
+                if (!text || !text.result) {
+                    text = await getTextWithImgFromServer(imageElement.blob);
+                }
+                if (text && text.result) {
+                    if (imageElement.element.alt) {
+                        imageElement.element.alt += ' Image also auto recognised as ' + text.result;
+                    } else {
+                        imageElement.element.alt = 'Image auto recognised as ' + text.result;
                     }
-                    if (text && text.result) {
-                        imageElement.element.alt = text.result;
-                        let imageTextDiv = document.createElement('div');
-                        let improveDiv = document.createElement('button');
-                        imageTextDiv.innerText = text.result;
-                        improveDiv.innerText = 'Improve this recognition';
-                        improveDiv.onclick = onImproveWrapper(imageElement.sha256);
-                        imageElement.element.parentNode.insertBefore(imageTextDiv, imageElement.element);
-                        imageElement.element.parentNode.insertBefore(improveDiv, imageElement.element);
-                        console.log(imageElement.src, imageElement.element.alt);
-                    }
+                    let imageTextDiv = document.createElement('div');
+                    let improveDiv = document.createElement('button');
+                    imageTextDiv.innerText = text.result;
+                    improveDiv.innerText = 'Improve this recognition';
+                    improveDiv.onclick = onImproveWrapper(imageElement.sha256);
+                    imageElement.element.parentNode.insertBefore(imageTextDiv, imageElement.element);
+                    imageElement.element.parentNode.insertBefore(improveDiv, imageElement.element);
+                    console.log(imageElement.src, imageElement.element.alt);
                 }
             }
         }
