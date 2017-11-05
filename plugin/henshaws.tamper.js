@@ -18,6 +18,7 @@
     const getTextWithImgUrl = 'getTextWithImg';
     const getTopicUrl = 'getTopic';
     const parseMapUrl = 'parseMap';
+    const setTextUrl = 'setText';
 
     function parseMapFromServer(url) {
         return new Promise((resolve, reject) => {
@@ -47,6 +48,28 @@
                 url: apiUrl + getTopicUrl,
                 method: "POST",
                 data: JSON.stringify({url: url}),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                onload: function (response) {
+                    if (response.status === 200 && response.responseText) {
+                        resolve(JSON.parse(response.responseText));
+                    } else if (response.status === 404) {
+                        resolve();
+                    } else {
+                        resolve();
+                    }
+                }
+            });
+        });
+    }
+
+    function setTextOnServer(imageHash, description) {
+        return new Promise((resolve, reject) => {
+            GM_xmlhttpRequest({
+                url: apiUrl + setTextUrl + '/' + imageHash,
+                method: "POST",
+                data: JSON.stringify({description: description}),
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -145,28 +168,54 @@
         let imgElements = [];
         for (let i = 0; i < document.images.length; i++) {
             let imgElement = document.images[i];
-            if (!imgElement.src.contains('maps.googleapis.com')) {
+            if (!imgElement.src.includes('maps.googleapis.com')) {
+                let blob = await getBlobBase64FromSrc(imgElement.src)
                 imgElements.push({
                     element: imgElement,
                     src: imgElement.src,
-                    blob: await getBlobBase64FromSrc(imgElement.src)
+                    blob: blob,
+                    sha256: sha256(blob)
                 });
             }
         }
         return imgElements;
     }
 
+    function onImproveWrapper(imageHash) {
+        return function (e) {
+            e.preventDefault();
+            let betterDescription = prompt('Write a better description');
+            if (betterDescription) {
+                setTextOnServer(imageHash, betterDescription).then(result => {
+                    if (result && result.status && result.status === 'ok') {
+                        alert('Thanks for your contribution');
+                    }
+                }).catch(console.error)
+            }
+        }
+    }
+
+
     async function getImgElementsAndConvertToText() {
         let imageElements = await getImgElements();
         if (imageElements.length > 0) {
             for (let imageElement of imageElements) {
-                let text = await getTextFromServer(sha256(imageElement.blob));
-                if (!text || !text.result) {
-                    text = await getTextWithImgFromServer(imageElement.blob);
-                }
-                if (text && text.result) {
-                    imageElement.element.alt = text.result;
-                    console.log(imageElement.src, imageElement.element.alt);
+                if (!imageElement.element.alt) {
+                    let text = await getTextFromServer(imageElement.sha256);
+                    if (!text || !text.result) {
+                        text = await getTextWithImgFromServer(imageElement.blob);
+                    }
+                    if (text && text.result) {
+                        imageElement.element.alt = text.result;
+                        let imageTextDiv = document.createElement('div');
+                        let improveDiv = document.createElement('button');
+                        imageTextDiv.innerText = text.result;
+                        improveDiv.innerText = 'Improve this recognition';
+                        improveDiv.onclick = onImproveWrapper(imageElement.sha256);
+                        imageElement.element.parentNode.insertBefore(imageTextDiv, imageElement.element);
+                        imageElement.element.parentNode.insertBefore(improveDiv, imageElement.element);
+                        console.log(imageElement.src, imageElement.element.alt);
+                    }
                 }
             }
         }

@@ -65,5 +65,14 @@ def getTextUsingAPI():
     else:
         return jsonify(errorCode=20, errorMsg='Invalid request'), 400
 
+@app.route('/setText/<imageHash>', methods=['POST'])
+def setTextInCache(imageHash):
+    data = request.get_json()
+    if data and data['description']:
+        imageCache[imageHash] = data['description']
+        return jsonify(status='ok')
+    else:
+        return jsonify(errorCode=20, errorMsg='Invalid request'), 400
+
 if __name__ == '__main__':
     app.run()
