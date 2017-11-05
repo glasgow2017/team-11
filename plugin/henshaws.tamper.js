@@ -13,6 +13,8 @@
 (function () {
     'use strict';
 
+    // API calls start
+
     const apiUrl = 'http://ec2-52-209-24-100.eu-west-1.compute.amazonaws.com:5000/';
     const getTextUrl = 'getText';
     const getTextWithImgUrl = 'getTextWithImg';
@@ -20,6 +22,7 @@
     const parseMapUrl = 'parseMap';
     const setTextUrl = 'setText';
 
+    // send a google map url to the backend and gets back the location text and distance and time to location
     function parseMapFromServer(url) {
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
@@ -42,6 +45,7 @@
         });
     }
 
+    // sends the url to the backend and gets back a list of common word and word count
     function getTopicFromServer(url) {
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
@@ -64,6 +68,7 @@
         });
     }
 
+    // sets the image recognition text on the backend, for manual description improvement
     function setTextOnServer(imageHash, description) {
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
@@ -86,6 +91,7 @@
         });
     }
 
+    // try to get text of image from backend cache using image hash only
     function getTextFromServer(imageHash) {
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
@@ -104,6 +110,7 @@
         });
     }
 
+    // get text of image by sending image blob, this will use the cloud vision apis
     function getTextWithImgFromServer(imageBase64Blob) {
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
@@ -125,6 +132,7 @@
         });
     }
 
+    // get blob of img src or return src if already a data url
     function getBlobFromServer(src) {
         return new Promise((resolve, reject) => {
             if (src.startsWith('data')) {
@@ -146,6 +154,9 @@
         });
     }
 
+    // API calls end
+
+    // get base64 encoded string of blob from img src
     async function getBlobBase64FromSrc(src) {
         let blob = await getBlobFromServer(src);
         if (blob.constructor.name === 'Blob') {
@@ -155,6 +166,7 @@
         }
     }
 
+    // convert blob to base64 string
     function blobToBase64(blob) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -164,12 +176,13 @@
         });
     }
 
+    // build array of img elements storing the element, src, image blob and sha256 of the blob
     async function getImgElements() {
         let imgElements = [];
         for (let i = 0; i < document.images.length; i++) {
             let imgElement = document.images[i];
             if (!imgElement.src.includes('maps.googleapis.com')) {
-                let blob = await getBlobBase64FromSrc(imgElement.src)
+                let blob = await getBlobBase64FromSrc(imgElement.src);
                 imgElements.push({
                     element: imgElement,
                     src: imgElement.src,
@@ -181,6 +194,7 @@
         return imgElements;
     }
 
+    // returns onclick function for image recognition improvement providing image hash in closure
     function onImproveWrapper(imageHash) {
         return function (e) {
             e.preventDefault();
@@ -195,7 +209,8 @@
         }
     }
 
-
+    // process image elements, calling backend api and adding to alt text and adding improve recognition button
+    // tries the image hash api call, if fails then sends the image blob
     async function getImgElementsAndConvertToText() {
         let imageElements = await getImgElements();
         if (imageElements.length > 0) {
@@ -223,6 +238,7 @@
         }
     }
 
+    // get list of document keywords and word count and display at top of page
     async function addTopicsToDocument() {
         let topics = await getTopicFromServer(document.URL);
         if (topics && topics.topic && topics.word_count) {
@@ -235,6 +251,7 @@
         }
     }
 
+    // get array of elements whether images or iframes of google maps
     async function getMapElements() {
         let mapElements = [];
         for (let i = 0; i < document.images.length; i++) {
@@ -259,6 +276,7 @@
         return mapElements;
     }
 
+    // gets map text and adds details to page
     async function addMapDetailsToDocument() {
         let mapElements = await getMapElements();
         for (let mapElement of mapElements) {

@@ -7,12 +7,16 @@ from map.map_aloud import parse_map
 
 app = Flask(__name__)
 
+# cache of image recognition
+# key: sha256 of the base64 of the image blob, value: the recognition result
 imageCache = {}
 
 @app.route('/')
 def blankDefault():
     return ''
 
+# accepts a google maps static or embed url
+# returns location text and distance and time to destination
 @app.route('/parseMap', methods=['POST'])
 def parseMap():
     data = request.get_json()
@@ -25,7 +29,7 @@ def parseMap():
     else:
         return jsonify(errorCode=20, errorMsg='Invalid request'), 400
 
-
+# accepts url of website and returns list of common words on page and word count
 @app.route('/getTopic', methods=['POST'])
 def getTopic():
     data = request.get_json()
@@ -38,7 +42,7 @@ def getTopic():
     else:
         return jsonify(errorCode=20, errorMsg='Invalid request'), 400
 
-
+# gets image text from cache using the sha256 of the base64 of the image blob
 @app.route('/getText/<imageHash>', methods=['GET'])
 def getTextUsingCache(imageHash):
     if imageHash in imageCache:
@@ -46,6 +50,8 @@ def getTextUsingCache(imageHash):
     else:
         return jsonify(errorCode=10, errorMsg='Not in cache'), 404
 
+# accepts base64 image blob and send to cloud image recognition api
+# returns description of image
 @app.route('/getTextWithImg', methods=['POST'])
 def getTextUsingAPI():
     data = request.get_json()
@@ -65,6 +71,7 @@ def getTextUsingAPI():
     else:
         return jsonify(errorCode=20, errorMsg='Invalid request'), 400
 
+# updates cache of image recognition with custom description
 @app.route('/setText/<imageHash>', methods=['POST'])
 def setTextInCache(imageHash):
     data = request.get_json()

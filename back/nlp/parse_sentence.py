@@ -59,10 +59,6 @@ def rank_word_by_appearance_bank(word_bank, order='acs'):
 def find_top_words(sorted_word_bank, num=10):
     return [x[0] for x in sorted_word_bank[:num]]
 
-
-
-
-
 def get_nouns(text, tags=['NNP', 'NN']):
     blob = TextBlob(text)
     nouns = [word.lower() for word, tag in blob.tags if tag in tags]
@@ -80,7 +76,6 @@ def get_top_nouns(text, num=10):
     nouns_bank = get_nouns_bank(text)
     sorted_nouns_bank = rank_word_by_appearance_bank(nouns_bank, order='des')
     return find_top_words(sorted_nouns_bank)
-
 
 ''' Find Content
     scope = 1 -> only read this sentence
@@ -107,7 +102,6 @@ def tag_visible(element):
         return False
     return True
 
-
 def text_from_html(body):
     soup = BeautifulSoup(body, 'html.parser')
     texts = soup.findAll(text=True)
@@ -119,7 +113,6 @@ def get_text_from_html(to_read_url):
     html = urllib.urlopen(to_read_url).read()
     text = text_from_html(html).lower()
     return text
-
 
 def find_text_from_html(to_read_url, key):
     text = get_text_from_html(to_read_url)
@@ -134,11 +127,11 @@ def find_top_words_from_text(text, num=10):
     nouns = get_top_nouns(text, num)
     return nouns
 
+# get topics and word count from webpage given url
 #
 # test_url = 'www.google.com'
 #
 # text = find_text_from_html(test_url, )
-
 def get_webpage_description(to_read_url):
     #template_topic = 'Keywords of this webpage are:'
     #template_wordcount = 'There are around {0} words'
@@ -158,8 +151,3 @@ def get_webpage_description(to_read_url):
         response['word_count'] = ''
 
     return response
-
-
-def find_text_from_html(to_read_url, key):
-    text = get_text_from_html(to_read_url)
-    return search_content(text, key, scope=1)

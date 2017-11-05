@@ -101,6 +101,7 @@ def find_distance(loc2, loc1=FAKE_LOCATION_PLACE_NAME, apikey=API_KEY):
     response = requests.get(search_url)
     return response
 
+# parse google directions for distance and duration
 def parse_distance(res):
     res = res.json()
     try:
@@ -115,6 +116,7 @@ def parse_distance(res):
         res = 'It is not possible to get from where you are'
         return res
 
+# get location text and distance text from map url
 def parse_map(url):
     loc1_text, loc1 = solve_map(url)
     distance = find_distance(loc1)
