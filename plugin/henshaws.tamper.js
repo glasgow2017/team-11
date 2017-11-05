@@ -17,6 +17,29 @@
     const getTextUrl = 'getText';
     const getTextWithImgUrl = 'getTextWithImg';
     const getTopicUrl = 'getTopic';
+    const parseMapUrl = 'parseMap';
+
+    function parseMapFromServer(url) {
+        return new Promise((resolve, reject) => {
+            GM_xmlhttpRequest({
+                url: apiUrl + parseMapUrl,
+                method: "POST",
+                data: JSON.stringify({url: url}),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                onload: function (response) {
+                    if (response.status === 200 && response.responseText) {
+                        resolve(JSON.parse(response.responseText));
+                    } else if (response.status === 404) {
+                        resolve();
+                    } else {
+                        resolve();
+                    }
+                }
+            });
+        });
+    }
 
     function getTopicFromServer(url) {
         return new Promise((resolve, reject) => {
@@ -118,16 +141,17 @@
         });
     }
 
-    // {"result": "......description......"}
     async function getImgElements() {
         let imgElements = [];
         for (let i = 0; i < document.images.length; i++) {
             let imgElement = document.images[i];
-            imgElements.push({
-                element: imgElement,
-                src: imgElement.src,
-                blob: await getBlobBase64FromSrc(imgElement.src)
-            });
+            if (!imgElement.src.contains('maps.googleapis.com')) {
+                imgElements.push({
+                    element: imgElement,
+                    src: imgElement.src,
+                    blob: await getBlobBase64FromSrc(imgElement.src)
+                });
+            }
         }
         return imgElements;
     }
@@ -160,8 +184,47 @@
         }
     }
 
+    async function getMapElements() {
+        let mapElements = [];
+        for (let i = 0; i < document.images.length; i++) {
+            let element = document.images[i];
+            if (element.src.includes('maps.googleapis.com')) {
+                mapElements.push({
+                    element: element,
+                    src: element.src
+                });
+            }
+        }
+        let iframes = document.getElementsByTagName('iframe');
+        for (let i = 0; i < iframes.length; i++) {
+            let element = iframes[i];
+            if (element.src.includes('www.google.com/maps')) {
+                mapElements.push({
+                    element: element,
+                    src: element.src
+                });
+            }
+        }
+        return mapElements;
+    }
+
+    async function addMapDetailsToDocument() {
+        let mapElements = await getMapElements();
+        for (let mapElement of mapElements) {
+            let mapData = await parseMapFromServer(mapElement.src);
+            if (mapData) {
+                let mapTextDiv = document.createElement('div');
+                mapTextDiv.innerText = mapData.location + ' ' + mapData.distance;
+                mapElement.element.parentNode.insertBefore(mapTextDiv, mapElement.element);
+                console.log(mapData);
+            }
+        }
+    }
+
     getImgElementsAndConvertToText().catch(console.error);
 
     addTopicsToDocument().catch(console.error);
+
+    addMapDetailsToDocument().catch(console.error);
 
 })();

@@ -3,6 +3,7 @@ import base64
 import hashlib
 from image_recognition.img_trans import getRecogTextFromImage
 from nlp.parse_sentence import get_webpage_description
+from map.map_aloud import parse_map
 
 app = Flask(__name__)
 
@@ -11,6 +12,19 @@ imageCache = {}
 @app.route('/')
 def blankDefault():
     return ''
+
+@app.route('/parseMap', methods=['POST'])
+def parseMap():
+    data = request.get_json()
+    if data and data['url']:
+        result = parse_map(data['url'])
+        if result and result['location'] and result['distance']:
+            return jsonify(result)
+        else:
+            return jsonify(errorCode=1, errorMsg='No result'), 204
+    else:
+        return jsonify(errorCode=20, errorMsg='Invalid request'), 400
+
 
 @app.route('/getTopic', methods=['POST'])
 def getTopic():
