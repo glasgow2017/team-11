@@ -131,7 +131,7 @@ def find_top_words_from_text(text, num=10):
 #
 # test_url = 'www.google.com'
 #
-# text = find_text_from_html(test_url, )
+# text = find_text_from_html(test_url, '')
 def get_webpage_description(to_read_url):
     #template_topic = 'Keywords of this webpage are:'
     #template_wordcount = 'There are around {0} words'
